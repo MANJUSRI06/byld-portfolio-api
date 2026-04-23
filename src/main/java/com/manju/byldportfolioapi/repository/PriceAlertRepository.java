@@ -9,4 +9,5 @@ import java.util.UUID;
 
 public interface PriceAlertRepository extends JpaRepository<PriceAlert, UUID> {
     List<PriceAlert> findByStatus(AlertStatus status);
+    List<PriceAlert> findByPortfolioId(UUID portfolioId);
 }
