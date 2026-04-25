@@ -366,10 +366,6 @@ Possible future enhancements:
 
 ---
 
-# Author
-
-Manjusri Shanmuga Kumar
-
 GitHub Repository:
 
 ```text
