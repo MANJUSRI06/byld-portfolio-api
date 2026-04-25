@@ -30,6 +30,7 @@ public class PortfolioService {
     private final PortfolioRepository portfolioRepository;
     private final HoldingRepository holdingRepository;
     private final TransactionRepository transactionRepository;
+    private final PriceFeedService priceFeedService;
 
     public Portfolio createPortfolio(CreatePortfolioRequest request) {
         Portfolio portfolio = Portfolio.builder()
@@ -157,12 +158,29 @@ public class PortfolioService {
 
         List<HoldingResponse> holdings = holdingRepository.findByPortfolio(portfolio)
                 .stream()
-                .map(holding -> HoldingResponse.builder()
-                        .id(holding.getId())
-                        .symbol(holding.getSymbol())
-                        .quantity(holding.getQuantity())
-                        .averageCost(holding.getAverageCost())
-                        .build())
+                .map(holding -> {
+                    BigDecimal currentPrice = priceFeedService.getCurrentPrice(holding.getSymbol());
+
+                    BigDecimal investedValue =
+                            holding.getQuantity().multiply(holding.getAverageCost());
+
+                    BigDecimal marketValue =
+                            holding.getQuantity().multiply(currentPrice);
+
+                    BigDecimal profitLoss =
+                            marketValue.subtract(investedValue);
+
+                    return HoldingResponse.builder()
+                            .id(holding.getId())
+                            .symbol(holding.getSymbol())
+                            .quantity(holding.getQuantity())
+                            .averageCost(holding.getAverageCost())
+                            .currentPrice(currentPrice)
+                            .investedValue(investedValue)
+                            .marketValue(marketValue)
+                            .profitLoss(profitLoss)
+                            .build();
+                })
                 .toList();
 
         return PortfolioSummaryResponse.builder()

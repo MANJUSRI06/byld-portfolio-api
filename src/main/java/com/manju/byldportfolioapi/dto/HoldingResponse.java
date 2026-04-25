@@ -13,4 +13,8 @@ public class HoldingResponse {
     private String symbol;
     private BigDecimal quantity;
     private BigDecimal averageCost;
+    private BigDecimal currentPrice;
+    private BigDecimal investedValue;
+    private BigDecimal marketValue;
+    private BigDecimal profitLoss;
 }
